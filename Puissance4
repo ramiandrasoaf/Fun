@@ -1,0 +1,191 @@
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
+import java.text.AttributedCharacterIterator;
+import java.awt.event.MouseAdapter;
+import javax.swing.*;
+
+public class Puissance4 extends JFrame{
+	private static final long serialVersionUID = 3660342240433840428L;
+	private final static int vide=0;
+	private final static int rouge=1;
+	private final static int jaune=2;
+	private static int couleur,tour;
+	private static JLabel tourJoueur;
+	private static Graphics graph;
+	
+	public Puissance4() {
+	    super("Puissance 4");
+	    setSize(590,600);
+	    this.setLocationRelativeTo(null);
+	    this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+	    JMenuBar barreMenu=new JMenuBar();
+	    setJMenuBar(barreMenu);
+	    JMenu modeJeu=new JMenu("Mode de jeu");
+	    JRadioButtonMenuItem homVsMach =new JRadioButtonMenuItem("Homme vs Machine");
+	    JRadioButtonMenuItem machVsHom=new JRadioButtonMenuItem("Machine vs Homme");
+	    JRadioButtonMenuItem homVsHom=new JRadioButtonMenuItem("Homme vs Homme");
+	    JRadioButtonMenuItem machVsMach=new JRadioButtonMenuItem("Machine vs Machine");
+	    ButtonGroup gr=new ButtonGroup();
+	    gr.add(homVsHom);
+	    gr.add(homVsMach);
+	    gr.add(machVsHom);
+	    gr.add(machVsMach);
+	    modeJeu.add(homVsHom);
+	    modeJeu.add( homVsMach);
+	    modeJeu.add( machVsHom);
+	    modeJeu.add(machVsMach);
+	    barreMenu.add(modeJeu);
+	    
+	    tourJoueur=new JLabel("Joueur "+", à vous de jouer !");
+	    barreMenu.add(tourJoueur);
+	    JPanel jeu=new JPanel();
+	    jeu.setSize(400, 300);
+	    jeu.setLayout(new GridLayout(6,7));
+	    jeu.setBackground(Color.gray);
+	    jeu.addMouseListener(new Jouer());
+	   /* JLabel grille [][]=new JLabel[6][7];
+	    for(int i=0;i<grille.length;i++) {
+	    	for(int j=0;j<grille.length;j++) {
+	    		grille[i][j]=new JLabel(new ImageIcon("Blanc.gif"));
+	    	jeu.add(grille[i][j]);
+	    	}
+	    }*/
+	    
+	    Panneau pan1=new Panneau();
+	    Panneau pan2=new Panneau();
+	    Panneau pan3=new Panneau();
+	    Panneau pan4=new Panneau();
+	    Panneau pan5=new Panneau();
+	    Panneau pan6=new Panneau();
+	    Panneau pan7=new Panneau();
+	    Panneau pan8=new Panneau();
+	    Panneau pan9=new Panneau();
+	    Panneau pan10=new Panneau();
+	    Panneau pan11=new Panneau();
+	    Panneau pan12=new Panneau();
+	    Panneau pan13=new Panneau();
+	    Panneau pan14=new Panneau();
+	    Panneau pan15=new Panneau();
+	    Panneau pan16=new Panneau();
+	    Panneau pan17=new Panneau();
+	    Panneau pan18=new Panneau();
+	    Panneau pan19=new Panneau();
+	    Panneau pan20=new Panneau();
+	    Panneau pan21=new Panneau();
+	    Panneau pan22=new Panneau();
+	    Panneau pan23=new Panneau();
+	    Panneau pan24=new Panneau();
+	    Panneau pan25=new Panneau();
+	    Panneau pan26=new Panneau();
+	    Panneau pan27=new Panneau();
+	    Panneau pan28=new Panneau();
+	    Panneau pan29=new Panneau();
+	    Panneau pan30=new Panneau();
+	    Panneau pan31=new Panneau();
+	    Panneau pan32=new Panneau();
+	    Panneau pan33=new Panneau();
+	    Panneau pan34=new Panneau();
+	    Panneau pan35=new Panneau();
+	    Panneau pan36=new Panneau();
+	    Panneau pan37=new Panneau();
+	    Panneau pan38=new Panneau();
+	    Panneau pan39=new Panneau();
+	    Panneau pan40=new Panneau();
+	    Panneau pan41=new Panneau();
+	    Panneau pan42=new Panneau();
+	    jeu.add(pan1);
+	    jeu.add(pan2);
+	    jeu.add(pan3);
+	    jeu.add(pan4);
+	    jeu.add(pan5);
+	    jeu.add(pan6);
+	    jeu.add(pan7);
+	    jeu.add(pan8);
+	    jeu.add(pan9);
+	    jeu.add(pan10);
+	    jeu.add(pan11);
+	    jeu.add(pan12);
+	    jeu.add(pan13);
+	    jeu.add(pan14);
+	    jeu.add(pan15);
+	    jeu.add(pan16);
+	    jeu.add(pan17);
+	    jeu.add(pan18);
+	    jeu.add(pan19);
+	    jeu.add(pan20);
+	    jeu.add(pan21);
+	    jeu.add(pan22);
+	    jeu.add(pan23);
+	    jeu.add(pan24);
+	    jeu.add(pan25);
+	    jeu.add(pan26);
+	    jeu.add(pan27);
+	    jeu.add(pan28);
+	    jeu.add(pan29);
+	    jeu.add(pan30);
+	    jeu.add(pan31);
+	    jeu.add(pan32);
+	    jeu.add(pan33);
+	    jeu.add(pan34);
+	    jeu.add(pan35);
+	    jeu.add(pan36);
+	    jeu.add(pan37);
+	    jeu.add(pan38);
+	    jeu.add(pan39);
+	    jeu.add(pan40);
+	    jeu.add(pan41);
+	    jeu.add(pan42);
+	    
+	    this.getContentPane().add(jeu,BorderLayout.CENTER);
+	   
+	}
+	
+	public class Panneau extends JPanel {
+		private static final long serialVersionUID = 1L;
+
+		public void colorer(Graphics g,int color) {
+			super.paintComponent(g);
+			super.setBackground(Color.BLUE);
+			g.fillOval(15, 10, 60, 60);
+			if(color==rouge) {
+				g.setColor(Color.RED);
+			}else if (color==jaune) {
+				g.setColor(Color.YELLOW);
+			}else {
+				g.setColor(Color.WHITE);
+			}
+		}
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			super.setBackground(Color.BLUE);
+			g.setColor(Color.white);
+			g.fillOval(15, 10, 60, 60);
+		}
+	}
+	
+	class Jouer extends MouseAdapter{
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			Graphics g;
+			tour++;
+			String tr=Integer.toString(tour);
+			tourJoueur.setText(tr);
+			Panneau pan= (Panneau) e.getSource();
+			g=pan.getGraphics();
+			
+			if(tour%2==1) {
+				couleur=rouge;
+				pan.colorer(g,rouge);
+			}else if (tour%2==0) {
+				couleur=jaune;
+				pan.colorer(g,jaune);
+			}
+
+					
+					
+		}
+	}
+}
