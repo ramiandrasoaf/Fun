@@ -1,3 +1,4 @@
+package projet;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.ImageObserver;
@@ -44,99 +45,15 @@ public class Puissance4 extends JFrame{
 	    jeu.setSize(400, 300);
 	    jeu.setLayout(new GridLayout(6,7));
 	    jeu.setBackground(Color.gray);
-	    jeu.addMouseListener(new Jouer());
-	   /* JLabel grille [][]=new JLabel[6][7];
+	    Panneau grille [][]=new Panneau[6][7];
+	    
+	    Jouer jouer = new Jouer();
 	    for(int i=0;i<grille.length;i++) {
 	    	for(int j=0;j<grille.length;j++) {
-	    		grille[i][j]=new JLabel(new ImageIcon("Blanc.gif"));
+	    		grille[i][j]=new Panneau(jouer);
 	    	jeu.add(grille[i][j]);
 	    	}
-	    }*/
-	    
-	    Panneau pan1=new Panneau();
-	    Panneau pan2=new Panneau();
-	    Panneau pan3=new Panneau();
-	    Panneau pan4=new Panneau();
-	    Panneau pan5=new Panneau();
-	    Panneau pan6=new Panneau();
-	    Panneau pan7=new Panneau();
-	    Panneau pan8=new Panneau();
-	    Panneau pan9=new Panneau();
-	    Panneau pan10=new Panneau();
-	    Panneau pan11=new Panneau();
-	    Panneau pan12=new Panneau();
-	    Panneau pan13=new Panneau();
-	    Panneau pan14=new Panneau();
-	    Panneau pan15=new Panneau();
-	    Panneau pan16=new Panneau();
-	    Panneau pan17=new Panneau();
-	    Panneau pan18=new Panneau();
-	    Panneau pan19=new Panneau();
-	    Panneau pan20=new Panneau();
-	    Panneau pan21=new Panneau();
-	    Panneau pan22=new Panneau();
-	    Panneau pan23=new Panneau();
-	    Panneau pan24=new Panneau();
-	    Panneau pan25=new Panneau();
-	    Panneau pan26=new Panneau();
-	    Panneau pan27=new Panneau();
-	    Panneau pan28=new Panneau();
-	    Panneau pan29=new Panneau();
-	    Panneau pan30=new Panneau();
-	    Panneau pan31=new Panneau();
-	    Panneau pan32=new Panneau();
-	    Panneau pan33=new Panneau();
-	    Panneau pan34=new Panneau();
-	    Panneau pan35=new Panneau();
-	    Panneau pan36=new Panneau();
-	    Panneau pan37=new Panneau();
-	    Panneau pan38=new Panneau();
-	    Panneau pan39=new Panneau();
-	    Panneau pan40=new Panneau();
-	    Panneau pan41=new Panneau();
-	    Panneau pan42=new Panneau();
-	    jeu.add(pan1);
-	    jeu.add(pan2);
-	    jeu.add(pan3);
-	    jeu.add(pan4);
-	    jeu.add(pan5);
-	    jeu.add(pan6);
-	    jeu.add(pan7);
-	    jeu.add(pan8);
-	    jeu.add(pan9);
-	    jeu.add(pan10);
-	    jeu.add(pan11);
-	    jeu.add(pan12);
-	    jeu.add(pan13);
-	    jeu.add(pan14);
-	    jeu.add(pan15);
-	    jeu.add(pan16);
-	    jeu.add(pan17);
-	    jeu.add(pan18);
-	    jeu.add(pan19);
-	    jeu.add(pan20);
-	    jeu.add(pan21);
-	    jeu.add(pan22);
-	    jeu.add(pan23);
-	    jeu.add(pan24);
-	    jeu.add(pan25);
-	    jeu.add(pan26);
-	    jeu.add(pan27);
-	    jeu.add(pan28);
-	    jeu.add(pan29);
-	    jeu.add(pan30);
-	    jeu.add(pan31);
-	    jeu.add(pan32);
-	    jeu.add(pan33);
-	    jeu.add(pan34);
-	    jeu.add(pan35);
-	    jeu.add(pan36);
-	    jeu.add(pan37);
-	    jeu.add(pan38);
-	    jeu.add(pan39);
-	    jeu.add(pan40);
-	    jeu.add(pan41);
-	    jeu.add(pan42);
+	    }
 	    
 	    this.getContentPane().add(jeu,BorderLayout.CENTER);
 	   
@@ -145,10 +62,11 @@ public class Puissance4 extends JFrame{
 	public class Panneau extends JPanel {
 		private static final long serialVersionUID = 1L;
 
-		public void colorer(Graphics g,int color) {
-			super.paintComponent(g);
-			super.setBackground(Color.BLUE);
-			g.fillOval(15, 10, 60, 60);
+		public Panneau(MouseAdapter adapter) {
+			this.addMouseListener(adapter);
+		}
+
+		public void colorer(Graphics g,int color) {	
 			if(color==rouge) {
 				g.setColor(Color.RED);
 			}else if (color==jaune) {
@@ -156,13 +74,17 @@ public class Puissance4 extends JFrame{
 			}else {
 				g.setColor(Color.WHITE);
 			}
+			super.paintComponent(g);
+			super.setBackground(Color.BLUE);
+			g.fillOval(15, 10, 60, 60);
+			
 		}
-		public void paintComponent(Graphics g) {
+		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			super.setBackground(Color.BLUE);
 			g.setColor(Color.white);
 			g.fillOval(15, 10, 60, 60);
-		}
+		};
 	}
 	
 	class Jouer extends MouseAdapter{
