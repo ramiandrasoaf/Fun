@@ -49,7 +49,7 @@ public class Puissance4 extends JFrame {
 		barreMenu.add(tourJoueur);
 		JPanel jeu = new JPanel();
 		jeu.setSize(400, 300);
-		jeu.setLayout(new GridLayout(6, 7));
+		jeu.setLayout(new GridLayout(ROW, COLUMN));
 		jeu.setBackground(Color.GRAY);
 
 		Jouer jouer = new Jouer(tourJoueur);
@@ -99,12 +99,8 @@ public class Puissance4 extends JFrame {
 		public void mouseClicked(MouseEvent e) {			
 			tour++;
 			tourJoueur.setText(Integer.toString(tour));
-			Panneau pan = (Panneau) e.getSource();			
-			pan.colorer(Color.YELLOW);
-
-			if (tour % 2 == 1) {
-				pan.colorer(Color.RED);
-			} 
+			Panneau pan = (Panneau) e.getSource();
+			pan.colorer(tour % 2 == 1 ? Color.RED: Color.YELLOW);
 		}
 	}
 }
