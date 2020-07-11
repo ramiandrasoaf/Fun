@@ -51,12 +51,10 @@ public class Puissance4 extends JFrame {
 		jeu.setSize(400, 300);
 		jeu.setLayout(new GridLayout(ROW, COLUMN));
 		jeu.setBackground(Color.GRAY);
-
-		Jouer jouer = new Jouer(tourJoueur);
 		
 		for (int i = 0; i < ROW; i++) {
 			for (int j = 0; j < COLUMN; j++) {
-				jeu.add(new Panneau(jouer));
+				jeu.add(new Panneau(new Jouer(tourJoueur)));
 			}
 		}
 
