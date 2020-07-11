@@ -71,8 +71,9 @@ public class Puissance4 extends JFrame {
 			this.addMouseListener(adapter);
 		}
 
-		public void colorer(Graphics g, Color color) {	
-			paintComponent(g);	
+		public void colorer(Color color) {	
+			Graphics g = super.getGraphics();			
+			this.paintComponent(g);	
 			g.setColor(color);
 			g.fillOval(15, 10, 60, 60);
 		}
@@ -95,16 +96,14 @@ public class Puissance4 extends JFrame {
 		}
 
 		@Override
-		public void mouseClicked(MouseEvent e) {
-			Graphics g;
+		public void mouseClicked(MouseEvent e) {			
 			tour++;
 			tourJoueur.setText(Integer.toString(tour));
-			Panneau pan = (Panneau) e.getSource();
-			g = pan.getGraphics();
-			pan.colorer(g, Color.YELLOW);
+			Panneau pan = (Panneau) e.getSource();			
+			pan.colorer(Color.YELLOW);
 
 			if (tour % 2 == 1) {
-				pan.colorer(g, Color.RED);
+				pan.colorer(Color.RED);
 			} 
 		}
 	}
