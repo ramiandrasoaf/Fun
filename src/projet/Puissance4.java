@@ -17,7 +17,7 @@ import javax.swing.JRadioButtonMenuItem;
 
 public class Puissance4 extends JFrame {
 	private static final long serialVersionUID = 3660342240433840428L;
-	
+
 	private static int tour;
 	private static final int COLUMN = 7;
 	private static final int ROW = 6;
@@ -51,11 +51,14 @@ public class Puissance4 extends JFrame {
 		jeu.setSize(400, 300);
 		jeu.setLayout(new GridLayout(ROW, COLUMN));
 		jeu.setBackground(Color.GRAY);
-		
+
+		Panneau[][] panneaux = new Panneau[ROW][COLUMN];
+
 		for (int rowIndex = 0; rowIndex < ROW; rowIndex++) {
 			for (int colIndex = 0; colIndex < COLUMN; colIndex++) {
 				Panneau panneau = new Panneau(rowIndex, colIndex);
-				panneau.addMouseListener(new Jouer(tourJoueur));
+				panneaux[rowIndex][colIndex] = panneau;
+				panneau.addMouseListener(new Jouer(panneaux, tourJoueur));
 				jeu.add(panneau);
 			}
 		}
@@ -66,15 +69,17 @@ public class Puissance4 extends JFrame {
 
 	public class Panneau extends JPanel {
 		private static final long serialVersionUID = 1L;
-		
+
 		private final int rowIndex;
 		private final int colIndex;
 
 		public Panneau(int rowIndex, int colIndex) {
 			this.rowIndex = rowIndex;
 			this.colIndex = colIndex;
+			super.setBackground(Color.BLUE);
+			super.setForeground(Color.WHITE);
 		}
-		
+
 		public int getRowIndex() {
 			return rowIndex;
 		}
@@ -82,37 +87,131 @@ public class Puissance4 extends JFrame {
 		public int getColIndex() {
 			return colIndex;
 		}
-		
-		public void colorer(Color color) {	
-			Graphics g = super.getGraphics();			
-			this.paintComponent(g);	
-			g.setColor(color);
-			g.fillOval(15, 10, 60, 60);
-		}
 
 		@Override
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			super.setBackground(Color.BLUE);
-			g.setColor(Color.white);
 			g.fillOval(15, 10, 60, 60);
 		};
 	}
 
 	class Jouer extends MouseAdapter {
-		
+
 		private JLabel tourJoueur;
-		
-		public Jouer(JLabel tourJoueur) {
+		private final Panneau[][] panneaux;
+
+		public Jouer(Panneau[][] panneaux, JLabel tourJoueur) {
 			this.tourJoueur = tourJoueur;
+			this.panneaux = panneaux;
+		}
+
+		public Panneau[][] getPanneaux() {
+			return panneaux;
 		}
 
 		@Override
-		public void mouseClicked(MouseEvent e) {			
+		public void mouseClicked(MouseEvent e) {
 			tour++;
 			tourJoueur.setText(Integer.toString(tour));
 			Panneau pan = (Panneau) e.getSource();
-			pan.colorer(tour % 2 == 1 ? Color.RED: Color.YELLOW);
+			Color color = tour % 2 == 1 ? Color.RED : Color.YELLOW;
+
+			boolean valide = jouer(panneaux, pan.colIndex, tour % 2 == 1 ? Color.RED : Color.YELLOW);
+			
+			if (!valide) {
+				tourJoueur.setText("Ce coup n'est pas valide !");
+			}
+			
+			boolean gagne = estCeGagne(panneaux, color);
+			boolean plein = plein(panneaux);
+			
+			if(gagne) {
+				if (color == Color.YELLOW) {
+					tourJoueur.setText("Le joueur O a gagn� !");
+				} else {
+					tourJoueur.setText("Le joueur X a gagn� !");
+				}
+				tour = 0;
+			} else if(plein){
+				tourJoueur.setText("Il y a match nul !");
+				tour = 0;
+			}	
+		}
+		
+		public boolean plein(Panneau[][] panneaux) {
+			// si on trouve une case vide sur la 1�re ligne, la grille n'est pas pleine :
+			for (Panneau panneau : panneaux[0]) {
+				if (panneau.getForeground() == Color.WHITE) {
+					return false;
+				}
+			}
+			// sinon, la grille est pleine :
+			return true;
+		}
+
+		public boolean jouer(Panneau[][] panneaux, int colonne, Color couleur) {
+			// si la colonne est pleine, le coup n'est pas valide :
+			if (panneaux[0][colonne].getForeground() != Color.WHITE) {
+				return false;
+			}
+			// on parcourt la colonne du bas jusqu'� la premi�re case vide :
+			int ligne = panneaux.length - 1;
+			while (panneaux[ligne][colonne].getForeground() != Color.WHITE) {
+				--ligne;
+			}
+			// on remplit la case vide trouv�e :
+			panneaux[ligne][colonne].setForeground(couleur);
+			return true;
+		}
+
+		public boolean estCeGagne(Panneau[][] panneaux, Color couleurJoueur) {
+
+			for (int ligne = 0; ligne < panneaux.length; ++ligne) {
+				for (int colonne = 0; colonne < panneaux[ligne].length; ++colonne) {
+					// pour chaque case contenant un pion de la bonne couleur,
+					// on compte les pions de la m�me couleur dans 4 directions :
+					Panneau panneau = panneaux[ligne][colonne];
+					final int ligneMax = panneaux.length - 4;
+					final int colonneMax = panneaux[ligne].length - 4;
+
+					if (panneau.getGraphics().getColor() == couleurJoueur) {
+						if (
+						// en diagonale, vers le haut et la droite :
+						(ligne >= 3 && colonne <= colonneMax && compter(panneaux, ligne, colonne, -1, +1) >= 4) ||
+						// horizontalement, vers la droite :
+								(colonne <= colonneMax && compter(panneaux, ligne, colonne, 0, +1) >= 4) ||
+								// en diagonale, vers le bas et la droite :
+								(ligne <= ligneMax && colonne <= colonneMax
+										&& compter(panneaux, ligne, colonne, +1, +1) >= 4)
+								||
+								// verticalement, vers le bas :
+								(ligne <= ligneMax && compter(panneaux, ligne, colonne, +1, 0) >= 4)) {
+							return true;
+						}
+					}
+				}
+
+			}
+			// si on a parcouru toutes les directions sans que le nombre de pions align�s
+			// d�passe 4,
+			// le joueur n'a pas encore gagne :
+			return false;
+		}
+
+		public int compter(Panneau[][] panneaux, int ligDepart, int colDepart, int dirLigne, int dirColonne) {
+			int compteur = 0;
+			int ligne = ligDepart;
+			int colonne = colDepart;
+			// on part de la case (ligDepart,colDepart) et on parcourt la grille
+			// dans la direction donn�e par (dirLigne,dirColonne)
+			// tant qu'on trouve des pions de la m�me couleur que le pion de d�part :
+			while (panneaux[ligne][colonne] == panneaux[ligDepart][colDepart] && ligne >= 0 && ligne < panneaux.length
+					&& colonne >= 0 && colonne < panneaux[ligne].length) {
+				++compteur;
+				ligne = ligne + dirLigne;
+				colonne = colonne + dirColonne;
+			}
+			return compteur;
 		}
 	}
 }
