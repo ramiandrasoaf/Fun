@@ -52,9 +52,11 @@ public class Puissance4 extends JFrame {
 		jeu.setLayout(new GridLayout(ROW, COLUMN));
 		jeu.setBackground(Color.GRAY);
 		
-		for (int i = 0; i < ROW; i++) {
-			for (int j = 0; j < COLUMN; j++) {
-				jeu.add(new Panneau(new Jouer(tourJoueur)));
+		for (int rowIndex = 0; rowIndex < ROW; rowIndex++) {
+			for (int colIndex = 0; colIndex < COLUMN; colIndex++) {
+				Panneau panneau = new Panneau(rowIndex, colIndex);
+				panneau.addMouseListener(new Jouer(tourJoueur));
+				jeu.add(panneau);
 			}
 		}
 
@@ -64,11 +66,23 @@ public class Puissance4 extends JFrame {
 
 	public class Panneau extends JPanel {
 		private static final long serialVersionUID = 1L;
+		
+		private final int rowIndex;
+		private final int colIndex;
 
-		public Panneau(MouseAdapter adapter) {
-			this.addMouseListener(adapter);
+		public Panneau(int rowIndex, int colIndex) {
+			this.rowIndex = rowIndex;
+			this.colIndex = colIndex;
+		}
+		
+		public int getRowIndex() {
+			return rowIndex;
 		}
 
+		public int getColIndex() {
+			return colIndex;
+		}
+		
 		public void colorer(Color color) {	
 			Graphics g = super.getGraphics();			
 			this.paintComponent(g);	
