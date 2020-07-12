@@ -52,9 +52,11 @@ public class Puissance4 extends JFrame {
 		jeu.setLayout(new GridLayout(ROW, COLUMN));
 		jeu.setBackground(Color.GRAY);
 		
-		for (int i = 0; i < ROW; i++) {
-			for (int j = 0; j < COLUMN; j++) {
-				jeu.add(new Panneau(new Jouer(tourJoueur)));
+		for (int rowIndex = 0; rowIndex < ROW; rowIndex++) {
+			for (int colIndex = 0; colIndex < COLUMN; colIndex++) {
+				Panneau cellule = new Panneau(rowIndex, colIndex);
+				cellule.addMouseListener(new Jouer(tourJoueur));
+				jeu.add(cellule);
 			}
 		}
 
@@ -64,9 +66,25 @@ public class Puissance4 extends JFrame {
 
 	public class Panneau extends JPanel {
 		private static final long serialVersionUID = 1L;
+		
+		private Color color = Color.WHITE;
+		private final int rowIndex;
+		private final int colIndex;
 
-		public Panneau(MouseAdapter adapter) {
-			this.addMouseListener(adapter);
+		public Panneau(int rowIndex, int colIndex) {
+			super();
+			this.rowIndex = rowIndex;
+			this.colIndex = colIndex;
+			super.setBackground(Color.BLUE);
+		}
+				
+
+		public int getRowIndex() {
+			return rowIndex;
+		}
+
+		public int getColIndex() {
+			return colIndex;
 		}
 
 		public void colorer(Color color) {	
@@ -75,14 +93,18 @@ public class Puissance4 extends JFrame {
 			g.setColor(color);
 			g.fillOval(15, 10, 60, 60);
 		}
+		
+		public void setColor(Color color) {
+			this.color = color;
+		}
 
 		@Override
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			super.setBackground(Color.BLUE);
-			g.setColor(Color.white);
+			g.setColor(this.color);
 			g.fillOval(15, 10, 60, 60);
 		};
+		
 	}
 
 	class Jouer extends MouseAdapter {
@@ -98,7 +120,9 @@ public class Puissance4 extends JFrame {
 			tour++;
 			tourJoueur.setText(Integer.toString(tour));
 			Panneau pan = (Panneau) e.getSource();
-			pan.colorer(tour % 2 == 1 ? Color.RED: Color.YELLOW);
+			pan.setColor(tour % 2 == 1 ? Color.RED: Color.YELLOW);
+			pan.paintComponent(getGraphics());
+			
 		}
 	}
 }
