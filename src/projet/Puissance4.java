@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
@@ -87,7 +88,7 @@ public class Puissance4 extends JFrame {
 		public int getColIndex() {
 			return colIndex;
 		}
-
+		
 		@Override
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
@@ -108,7 +109,7 @@ public class Puissance4 extends JFrame {
 		public Panneau[][] getPanneaux() {
 			return panneaux;
 		}
-
+		
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			tour++;
@@ -116,7 +117,7 @@ public class Puissance4 extends JFrame {
 			Panneau pan = (Panneau) e.getSource();
 			Color color = tour % 2 == 1 ? Color.RED : Color.YELLOW;
 
-			boolean valide = jouer(panneaux, pan.colIndex, tour % 2 == 1 ? Color.RED : Color.YELLOW);
+			boolean valide = jouer(panneaux, pan.colIndex, color);
 			
 			if (!valide) {
 				tourJoueur.setText("Ce coup n'est pas valide !");
@@ -174,7 +175,7 @@ public class Puissance4 extends JFrame {
 					final int ligneMax = panneaux.length - 4;
 					final int colonneMax = panneaux[ligne].length - 4;
 
-					if (panneau.getGraphics().getColor() == couleurJoueur) {
+					if (panneau.getForeground() == couleurJoueur) {
 						if (
 						// en diagonale, vers le haut et la droite :
 						(ligne >= 3 && colonne <= colonneMax && compter(panneaux, ligne, colonne, -1, +1) >= 4) ||
