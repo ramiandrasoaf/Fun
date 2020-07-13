@@ -24,7 +24,7 @@ public class Puissance4 extends JFrame {
 	private static int tour;
 	private static final int COLUMN = 7;
 	private static final int ROW = 6;
-	private ModeJeu modeJeuEnum;
+	private ModeJeu modeJeurActuel;
 	
 	
 	private enum ModeJeu {
@@ -41,13 +41,20 @@ public class Puissance4 extends JFrame {
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		JMenuBar barreMenu = new JMenuBar();
 		setJMenuBar(barreMenu);
+		
 		JMenu modeJeu = new JMenu("Mode de jeu");
+		
 		JRadioButtonMenuItem homVsMach = new JRadioButtonMenuItem("Homme vs Machine");
-		homVsMach.addActionListener(new ModeJeuSelectionListener());
+		homVsMach.addActionListener(new ModeJeuSelectionListener(ModeJeu.HOMME_VS_MACHINE));
 		
 		JRadioButtonMenuItem machVsHom = new JRadioButtonMenuItem("Machine vs Homme");
+		machVsHom.addActionListener(new ModeJeuSelectionListener(ModeJeu.MACHINE_VS_HOMME));
+		
 		JRadioButtonMenuItem homVsHom = new JRadioButtonMenuItem("Homme vs Homme");
+		homVsHom.addActionListener(new ModeJeuSelectionListener(ModeJeu.HOMME_VS_HOMME));
+		
 		JRadioButtonMenuItem machVsMach = new JRadioButtonMenuItem("Machine vs Machine");
+		machVsMach.addActionListener(new ModeJeuSelectionListener(ModeJeu.MACHINE_VS_MACHINE));
 		
 		ButtonGroup gr = new ButtonGroup();
 		gr.add(homVsHom);
@@ -74,7 +81,7 @@ public class Puissance4 extends JFrame {
 			for (int colIndex = 0; colIndex < COLUMN; colIndex++) {
 				Panneau panneau = new Panneau(rowIndex, colIndex);
 				panneaux[rowIndex][colIndex] = panneau;
-				panneau.addMouseListener(new Jouer(panneaux, tourJoueur, modeJeuEnum));
+				panneau.addMouseListener(new Jouer(panneaux, tourJoueur, modeJeurActuel));
 				jeu.add(panneau);
 			}
 		}
@@ -85,15 +92,15 @@ public class Puissance4 extends JFrame {
 	
 	@SuppressWarnings("unused")
 	private final class ModeJeuSelectionListener implements ActionListener {
+		private final ModeJeu modeJeuEnum;
+		
+		public ModeJeuSelectionListener(ModeJeu modeJeuEnum) {
+			this.modeJeuEnum = modeJeuEnum;
+		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JRadioButtonMenuItem buttonMenuItem = (JRadioButtonMenuItem) e.getSource();
-			if("HVSH".equals(buttonMenuItem.getName())) {
-				modeJeuEnum = ModeJeu.HOMME_VS_HOMME;
-			} else if("HVMH".equals(buttonMenuItem.getName())) {
-				modeJeuEnum = ModeJeu.HOMME_VS_MACHINE;
-			}
+			modeJeurActuel = modeJeuEnum;
 		}
 		
 	}
