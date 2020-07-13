@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -22,6 +24,15 @@ public class Puissance4 extends JFrame {
 	private static int tour;
 	private static final int COLUMN = 7;
 	private static final int ROW = 6;
+	private ModeJeu modeJeuEnum;
+	
+	
+	private enum ModeJeu {
+		HOMME_VS_HOMME,
+		HOMME_VS_MACHINE,
+		MACHINE_VS_HOMME,
+		MACHINE_VS_MACHINE
+	}
 
 	public Puissance4() {
 		super("Puissance 4");
@@ -32,9 +43,12 @@ public class Puissance4 extends JFrame {
 		setJMenuBar(barreMenu);
 		JMenu modeJeu = new JMenu("Mode de jeu");
 		JRadioButtonMenuItem homVsMach = new JRadioButtonMenuItem("Homme vs Machine");
+		homVsMach.addActionListener(new ModeJeuSelectionListener());
+		
 		JRadioButtonMenuItem machVsHom = new JRadioButtonMenuItem("Machine vs Homme");
 		JRadioButtonMenuItem homVsHom = new JRadioButtonMenuItem("Homme vs Homme");
 		JRadioButtonMenuItem machVsMach = new JRadioButtonMenuItem("Machine vs Machine");
+		
 		ButtonGroup gr = new ButtonGroup();
 		gr.add(homVsHom);
 		gr.add(homVsMach);
@@ -45,6 +59,7 @@ public class Puissance4 extends JFrame {
 		modeJeu.add(machVsHom);
 		modeJeu.add(machVsMach);
 		barreMenu.add(modeJeu);
+		
 
 		JLabel tourJoueur = new JLabel("Joueur " + ", à vous de jouer !");
 		barreMenu.add(tourJoueur);
@@ -59,13 +74,28 @@ public class Puissance4 extends JFrame {
 			for (int colIndex = 0; colIndex < COLUMN; colIndex++) {
 				Panneau panneau = new Panneau(rowIndex, colIndex);
 				panneaux[rowIndex][colIndex] = panneau;
-				panneau.addMouseListener(new Jouer(panneaux, tourJoueur));
+				panneau.addMouseListener(new Jouer(panneaux, tourJoueur, modeJeuEnum));
 				jeu.add(panneau);
 			}
 		}
 
 		this.getContentPane().add(jeu, BorderLayout.CENTER);
 
+	}
+	
+	@SuppressWarnings("unused")
+	private final class ModeJeuSelectionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JRadioButtonMenuItem buttonMenuItem = (JRadioButtonMenuItem) e.getSource();
+			if("HVSH".equals(buttonMenuItem.getName())) {
+				modeJeuEnum = ModeJeu.HOMME_VS_HOMME;
+			} else if("HVMH".equals(buttonMenuItem.getName())) {
+				modeJeuEnum = ModeJeu.HOMME_VS_MACHINE;
+			}
+		}
+		
 	}
 
 	public class Panneau extends JPanel {
@@ -100,10 +130,13 @@ public class Puissance4 extends JFrame {
 
 		private JLabel tourJoueur;
 		private final Panneau[][] panneaux;
+		private final ModeJeu modeJeu;
 
-		public Jouer(Panneau[][] panneaux, JLabel tourJoueur) {
+		public Jouer(Panneau[][] panneaux, JLabel tourJoueur, ModeJeu modeJeu) {
 			this.tourJoueur = tourJoueur;
 			this.panneaux = panneaux;
+			this.modeJeu = modeJeu;
+			
 		}
 
 		public Panneau[][] getPanneaux() {
@@ -115,7 +148,7 @@ public class Puissance4 extends JFrame {
 			tour++;
 			tourJoueur.setText(Integer.toString(tour));
 			Panneau pan = (Panneau) e.getSource();
-			Color color = tour % 2 == 1 ? Color.RED : Color.YELLOW;
+			Color color = tour % 2 == 0 ? Color.RED : Color.YELLOW;
 
 			boolean valide = jouer(panneaux, pan.colIndex, color);
 			
