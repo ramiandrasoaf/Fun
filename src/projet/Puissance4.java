@@ -24,7 +24,7 @@ public class Puissance4 extends JFrame {
 	private static int tour;
 	private static final int COLUMN = 7;
 	private static final int ROW = 6;
-	private ModeJeu modeJeurActuel;
+	private ModeJeu modeJeurActuel=ModeJeu.HOMME_VS_HOMME;
 
 	private enum ModeJeu {
 		HOMME_VS_HOMME, HOMME_VS_MACHINE, MACHINE_VS_HOMME, MACHINE_VS_MACHINE
@@ -63,7 +63,7 @@ public class Puissance4 extends JFrame {
 		modeJeu.add(machVsMach);
 		barreMenu.add(modeJeu);
 
-		JLabel tourJoueur = new JLabel("Joueur " + ", Ã  vous de jouer !");
+		JLabel tourJoueur = new JLabel("Joueur " + ", à  vous de jouer !");
 		barreMenu.add(tourJoueur);
 		JPanel jeu = new JPanel();
 		jeu.setSize(400, 300);
@@ -151,7 +151,7 @@ public class Puissance4 extends JFrame {
 			tour++;
 			tourJoueur.setText(Integer.toString(tour));
 			Panneau pan = (Panneau) e.getSource();
-			Color color = tour % 2 == 0 ? Color.RED : Color.YELLOW;
+			Color color = tour % 2 == 1 ? Color.RED : Color.YELLOW;
 
 			switch (this.modeJeu) {
 			case HOMME_VS_HOMME:
@@ -213,52 +213,52 @@ public class Puissance4 extends JFrame {
 			while (panneaux[ligne][colonne].getForeground() != Color.WHITE) {
 				--ligne;
 			}
-			// on remplit la case vide trouvï¿½e :
+			// on remplit la case vide trouvée :
 			panneaux[ligne][colonne].setForeground(couleur);
 			return true;
 		}
 
 		public boolean estCeGagne(Panneau[][] panneaux, Color couleurJoueur) {
-
-			for (int ligne = 0; ligne < panneaux.length; ++ligne) {
-				for (int colonne = 0; colonne < panneaux[ligne].length; ++colonne) {
-					// pour chaque case contenant un pion de la bonne couleur,
-					// on compte les pions de la mï¿½me couleur dans 4 directions :
-					Panneau panneau = panneaux[ligne][colonne];
-					final int ligneMax = panneaux.length - 4;
-					final int colonneMax = panneaux[ligne].length - 4;
-
-					if (panneau.getForeground() == couleurJoueur) {
-						if (
-						// en diagonale, vers le haut et la droite :
-						(ligne >= 3 && colonne <= colonneMax && compter(panneaux, ligne, colonne, -1, +1) >= 4) ||
-						// horizontalement, vers la droite :
-								(colonne <= colonneMax && compter(panneaux, ligne, colonne, 0, +1) >= 4) ||
-								// en diagonale, vers le bas et la droite :
-								(ligne <= ligneMax && colonne <= colonneMax
-										&& compter(panneaux, ligne, colonne, +1, +1) >= 4)
-								||
-								// verticalement, vers le bas :
-								(ligne <= ligneMax && compter(panneaux, ligne, colonne, +1, 0) >= 4)) {
-							return true;
+			boolean gagnant=false;
+			for(int ligne=panneaux.length-1;ligne>=0;ligne--) {
+				for(int col=panneaux[ligne].length-1;col>=0;col--) {
+					couleurJoueur=panneaux[ligne][col].getForeground();
+					if(ligne==5) {
+						if(col<=3) {
+							if((panneaux[ligne][col+1].getForeground()==couleurJoueur && 
+								panneaux[ligne][col+2].getForeground()==couleurJoueur &&
+								panneaux[ligne][col+3].getForeground()==couleurJoueur) //||
+							   /*(panneaux[ligne+1][col].getForeground()==couleurJoueur && 
+								panneaux[ligne+2][col].getForeground()==couleurJoueur &&
+								panneaux[ligne+3][col].getForeground()==couleurJoueur) ||
+							   (panneaux[ligne+1][col+1].getForeground()==couleurJoueur && 
+								panneaux[ligne+2][col+2].getForeground()==couleurJoueur &&
+								panneaux[ligne+3][col+3].getForeground()==couleurJoueur)*/) {
+								gagnant=true;
+							}
 						}
+					}else {
+						gagnant=false;
 					}
 				}
-
 			}
-			// si on a parcouru toutes les directions sans que le nombre de pions alignï¿½s
-			// dï¿½passe 4,
-			// le joueur n'a pas encore gagne :
-			return false;
+			/*couleurJoueur=panneaux[5][0].getForeground();
+			if((panneaux[5][1].getForeground()==couleurJoueur && panneaux[5][2].getForeground()==couleurJoueur) ||
+					(panneaux[4][0].getForeground()==couleurJoueur && panneaux[3][0].getForeground()==couleurJoueur)){
+				gagnant= true;
+			}else {
+				gagnant=false;
+			}*/
+			return gagnant;
 		}
 
-		public int compter(Panneau[][] panneaux, int ligDepart, int colDepart, int dirLigne, int dirColonne) {
+		/*public int compter(Panneau[][] panneaux, int ligDepart, int colDepart, int dirLigne, int dirColonne) {
 			int compteur = 0;
 			int ligne = ligDepart;
 			int colonne = colDepart;
 			// on part de la case (ligDepart,colDepart) et on parcourt la grille
-			// dans la direction donnï¿½e par (dirLigne,dirColonne)
-			// tant qu'on trouve des pions de la mï¿½me couleur que le pion de dï¿½part :
+			// dans la direction donnée par (dirLigne,dirColonne)
+			// tant qu'on trouve des pions de la mï¿½me couleur que le pion de départ :
 			while (panneaux[ligne][colonne] == panneaux[ligDepart][colDepart] && ligne >= 0 && ligne < panneaux.length
 					&& colonne >= 0 && colonne < panneaux[ligne].length) {
 				++compteur;
@@ -266,6 +266,6 @@ public class Puissance4 extends JFrame {
 				colonne = colonne + dirColonne;
 			}
 			return compteur;
-		}
+		}*/
 	}
 }
