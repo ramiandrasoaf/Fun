@@ -22,6 +22,8 @@ public class Puissance4 extends JFrame {
 	private static final long serialVersionUID = 3660342240433840428L;
 
 	private static int tour;
+	private JLabel annonce;
+	private String joueur;
 	private static final int COLUMN = 7;
 	private static final int ROW = 6;
 	private ModeJeu modeJeurActuel=ModeJeu.HOMME_VS_HOMME;
@@ -63,7 +65,10 @@ public class Puissance4 extends JFrame {
 		modeJeu.add(machVsMach);
 		barreMenu.add(modeJeu);
 
-		JLabel tourJoueur = new JLabel("Joueur " + ", à  vous de jouer !");
+		joueur="ROUGE";
+		annonce= new JLabel("Joueur "+ joueur+", à vous de jouer ! ");
+		barreMenu.add(annonce);
+		JLabel tourJoueur = new JLabel("  Tour 0");
 		barreMenu.add(tourJoueur);
 		JPanel jeu = new JPanel();
 		jeu.setSize(400, 300);
@@ -80,11 +85,10 @@ public class Puissance4 extends JFrame {
 				jeu.add(panneau);
 			}
 		}
-
 		this.getContentPane().add(jeu, BorderLayout.CENTER);
-
 	}
 
+	
 	@SuppressWarnings("unused")
 	private final class ModeJeuSelectionListener implements ActionListener {
 		private final ModeJeu modeJeuEnum;
@@ -97,9 +101,9 @@ public class Puissance4 extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			modeJeurActuel = modeJeuEnum;
 		}
-
 	}
 
+	
 	public class Panneau extends JPanel {
 		private static final long serialVersionUID = 1L;
 
@@ -128,6 +132,7 @@ public class Puissance4 extends JFrame {
 		};
 	}
 
+	
 	class Jouer extends MouseAdapter {
 
 		private JLabel tourJoueur;
@@ -138,7 +143,6 @@ public class Puissance4 extends JFrame {
 			this.tourJoueur = tourJoueur;
 			this.panneaux = panneaux;
 			this.modeJeu = modeJeu;
-
 		}
 
 		public Panneau[][] getPanneaux() {
@@ -149,9 +153,15 @@ public class Puissance4 extends JFrame {
 		public void mouseClicked(MouseEvent e) {
 
 			tour++;
-			tourJoueur.setText(Integer.toString(tour));
+			tourJoueur.setText("  Tour "+Integer.toString(tour));
 			Panneau pan = (Panneau) e.getSource();
 			Color color = tour % 2 == 1 ? Color.RED : Color.YELLOW;
+			if(tour%2==1) {
+				joueur="JAUNE";
+			}else if (tour%2==0) {
+				joueur="ROUGE";
+			}
+			annonce.setText("Joueur "+ joueur+", à vous de jouer ! ");
 
 			switch (this.modeJeu) {
 			case HOMME_VS_HOMME:
@@ -173,7 +183,7 @@ public class Puissance4 extends JFrame {
 			boolean valide = jouer(panneaux, pan.colIndex, color);
 
 			if (!valide) {
-				tourJoueur.setText("Ce coup n'est pas valide !");
+				annonce.setText("Ce coup n'est pas valide !");
 			}
 
 			boolean gagne = estCeGagne(panneaux, color);
@@ -181,19 +191,19 @@ public class Puissance4 extends JFrame {
 
 			if (gagne) {
 				if (color == Color.YELLOW) {
-					tourJoueur.setText("Le joueur O a gagnï¿½ !");
+					annonce.setText("Le joueur JAUNE a gagné !");
 				} else {
-					tourJoueur.setText("Le joueur X a gagnï¿½ !");
+					annonce.setText("Le joueur ROUGE a gagné !");
 				}
 				tour = 0;
 			} else if (plein) {
-				tourJoueur.setText("Il y a match nul !");
+				annonce.setText("Il y a match nul !");
 				tour = 0;
 			}
 		}
 
 		public boolean plein(Panneau[][] panneaux) {
-			// si on trouve une case vide sur la 1ï¿½re ligne, la grille n'est pas pleine :
+			// si on trouve une case vide sur la 1ère ligne, la grille n'est pas pleine :
 			for (Panneau panneau : panneaux[0]) {
 				if (panneau.getForeground() == Color.WHITE) {
 					return false;
@@ -208,7 +218,7 @@ public class Puissance4 extends JFrame {
 			if (panneaux[0][colonne].getForeground() != Color.WHITE) {
 				return false;
 			}
-			// on parcourt la colonne du bas jusqu'ï¿½ la premiï¿½re case vide :
+			// on parcourt la colonne du bas jusqu'à la première case vide :
 			int ligne = panneaux.length - 1;
 			while (panneaux[ligne][colonne].getForeground() != Color.WHITE) {
 				--ligne;
@@ -220,52 +230,97 @@ public class Puissance4 extends JFrame {
 
 		public boolean estCeGagne(Panneau[][] panneaux, Color couleurJoueur) {
 			boolean gagnant=false;
-			for(int ligne=panneaux.length-1;ligne>=0;ligne--) {
-				for(int col=panneaux[ligne].length-1;col>=0;col--) {
-					couleurJoueur=panneaux[ligne][col].getForeground();
-					if(ligne==5) {
-						if(col<=3) {
-							if((panneaux[ligne][col+1].getForeground()==couleurJoueur && 
-								panneaux[ligne][col+2].getForeground()==couleurJoueur &&
-								panneaux[ligne][col+3].getForeground()==couleurJoueur) //||
-							   /*(panneaux[ligne+1][col].getForeground()==couleurJoueur && 
-								panneaux[ligne+2][col].getForeground()==couleurJoueur &&
-								panneaux[ligne+3][col].getForeground()==couleurJoueur) ||
-							   (panneaux[ligne+1][col+1].getForeground()==couleurJoueur && 
-								panneaux[ligne+2][col+2].getForeground()==couleurJoueur &&
-								panneaux[ligne+3][col+3].getForeground()==couleurJoueur)*/) {
-								gagnant=true;
-							}
-						}
-					}else {
-						gagnant=false;
+			Scan s=new Scan(panneaux);
+			for(int ligne=0;ligne<panneaux.length-4;ligne++) {
+				for(int col=0;col<panneaux[ligne].length-4;col++) {
+					if(s.trouver4(panneaux,ligne,col)) {
+						gagnant=true;
 					}
 				}
 			}
-			/*couleurJoueur=panneaux[5][0].getForeground();
-			if((panneaux[5][1].getForeground()==couleurJoueur && panneaux[5][2].getForeground()==couleurJoueur) ||
-					(panneaux[4][0].getForeground()==couleurJoueur && panneaux[3][0].getForeground()==couleurJoueur)){
-				gagnant= true;
-			}else {
-				gagnant=false;
-			}*/
 			return gagnant;
 		}
-
-		/*public int compter(Panneau[][] panneaux, int ligDepart, int colDepart, int dirLigne, int dirColonne) {
-			int compteur = 0;
-			int ligne = ligDepart;
-			int colonne = colDepart;
-			// on part de la case (ligDepart,colDepart) et on parcourt la grille
-			// dans la direction donnée par (dirLigne,dirColonne)
-			// tant qu'on trouve des pions de la mï¿½me couleur que le pion de départ :
-			while (panneaux[ligne][colonne] == panneaux[ligDepart][colDepart] && ligne >= 0 && ligne < panneaux.length
-					&& colonne >= 0 && colonne < panneaux[ligne].length) {
-				++compteur;
-				ligne = ligne + dirLigne;
-				colonne = colonne + dirColonne;
+	}
+	
+	
+	class Scan {
+		//Pour trouver 4 pions côte à côte et de la même couleur
+		private final Panneau [][]panneaux;
+		
+		public Scan(Panneau[][] panneaux) {
+			this.panneaux=panneaux;
+		}
+		
+		private boolean getNext(Panneau[][] pan,int ligne,int colonne) {
+			
+			return false;
+		}
+		
+		private boolean horizontal(Panneau [][] p,int ligne,int colonne) {
+			boolean horizontal=false;
+		        //On scanne de gauche à droite 
+			if((p[ligne][colonne+1].getForeground()==p[ligne][colonne].getForeground() &&
+					p[ligne][colonne+2].getForeground()==p[ligne][colonne].getForeground() &&
+					p[ligne][colonne+3].getForeground()==p[ligne][colonne].getForeground()) ||
+					
+				//On scanne de droite à gauche	
+			   (p[ligne][colonne-1].getForeground()==p[ligne][colonne].getForeground() &&
+					p[ligne][colonne-2].getForeground()==p[ligne][colonne].getForeground() &&
+					p[ligne][colonne-3].getForeground()==p[ligne][colonne].getForeground())) {
+				horizontal=true;
 			}
-			return compteur;
-		}*/
+			return horizontal;
+		}
+		
+		private boolean vertical(Panneau [][] p,int ligne,int colonne) {
+			boolean vertical=false;
+		        //On scanne de haut en bas 
+			if((p[ligne+1][colonne].getForeground()==p[ligne][colonne].getForeground() &&
+					p[ligne+2][colonne].getForeground()==p[ligne][colonne].getForeground() &&
+					p[ligne+3][colonne].getForeground()==p[ligne][colonne].getForeground()) ||
+					
+				//On scanne de bas en haut		
+			   (p[ligne-1][colonne].getForeground()==p[ligne][colonne].getForeground() &&
+					p[ligne-2][colonne].getForeground()==p[ligne][colonne].getForeground() &&
+					p[ligne-3][colonne].getForeground()==p[ligne][colonne].getForeground())) {
+				vertical=true;
+			}
+			return vertical;
+		}
+		
+		private boolean diagonal(Panneau [][] p,int ligne,int colonne) {
+			boolean diagonal=false;
+		        //On scanne en haut à droite 
+			if((p[ligne-1][colonne+1].getForeground()==p[ligne][colonne].getForeground() &&
+					p[ligne-2][colonne+2].getForeground()==p[ligne][colonne].getForeground() &&
+					p[ligne-3][colonne+3].getForeground()==p[ligne][colonne].getForeground()) ||
+					
+				//On scanne en bas à droite
+			   (p[ligne+1][colonne+1].getForeground()==p[ligne][colonne].getForeground() &&
+					p[ligne+2][colonne+2].getForeground()==p[ligne][colonne].getForeground() &&
+					p[ligne+3][colonne+3].getForeground()==p[ligne][colonne].getForeground()) ||
+			   
+			    //On scanne en haut à gauche
+			   (p[ligne-1][colonne-1].getForeground()==p[ligne][colonne].getForeground() &&
+					p[ligne-2][colonne-2].getForeground()==p[ligne][colonne].getForeground() &&
+					p[ligne-3][colonne-3].getForeground()==p[ligne][colonne].getForeground()) ||
+			   
+			    //On scanne en bas à gauche
+			   (p[ligne+1][colonne-1].getForeground()==p[ligne][colonne].getForeground() &&
+					p[ligne+2][colonne-2].getForeground()==p[ligne][colonne].getForeground() &&
+					p[ligne+3][colonne-3].getForeground()==p[ligne][colonne].getForeground())) {
+				diagonal=true;
+			}	
+			return diagonal;
+		}
+		
+		public boolean trouver4(Panneau [][] p,int ligne,int colonne) {
+			boolean trouve=false;
+			if (horizontal(p,ligne,colonne) || vertical(p,ligne,colonne) || diagonal(p,ligne,colonne)) {
+				trouve=true;
+			}
+			return trouve;
+		}
+		
 	}
 }
