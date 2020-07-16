@@ -26,7 +26,7 @@ public class Puissance4 extends JFrame {
 	private String joueur;
 	private static final int COLUMN = 7;
 	private static final int ROW = 6;
-	private ModeJeu modeJeurActuel = ModeJeu.HOMME_VS_HOMME;
+	private ModeJeu modeJeuActuel = ModeJeu.HOMME_VS_HOMME;
 
 	private enum ModeJeu {
 		HOMME_VS_HOMME, HOMME_VS_MACHINE, MACHINE_VS_HOMME, MACHINE_VS_MACHINE
@@ -77,7 +77,7 @@ public class Puissance4 extends JFrame {
 
 		Panneau[][] panneaux = new Panneau[ROW][COLUMN];
 
-		Jouer mouseListener = new Jouer(panneaux, tourJoueur, modeJeurActuel);
+		Jouer mouseListener = new Jouer(panneaux, tourJoueur, modeJeuActuel);
 		
 		for (int rowIndex = 0; rowIndex < ROW; rowIndex++) {
 			for (int colIndex = 0; colIndex < COLUMN; colIndex++) {
@@ -101,7 +101,16 @@ public class Puissance4 extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			modeJeurActuel = modeJeuEnum;
+			modeJeuActuel = modeJeuEnum;
+			if(modeJeuEnum==ModeJeu.HOMME_VS_HOMME) {
+				
+			}else if (modeJeuEnum==ModeJeu.HOMME_VS_MACHINE) {
+				
+			}else if(modeJeuEnum==ModeJeu.MACHINE_VS_HOMME) {
+				
+			}else if(modeJeuEnum==ModeJeu.MACHINE_VS_MACHINE) {
+				
+			}
 		}
 	}
 
@@ -234,6 +243,10 @@ public class Puissance4 extends JFrame {
 			// on remplit la case vide trouvée :
 			cellules[ligne][colonne].setForeground(couleur);
 			return cellules[ligne][colonne];
+		}
+		
+		public void Machine(Panneau [][] panneaux,Color couleurMachine) {
+			
 		}
 	}
 
