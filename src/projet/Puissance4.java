@@ -22,7 +22,7 @@ public class Puissance4 extends JFrame {
 
 	private static final int NOMBRE_POINT_LIMIT = 4;
 	private static int tour;
-	private JLabel annonce;
+	private JLabel annonce,tourJoueur;
 	private String joueur;
 	private static final int COLUMN = 7;
 	private static final int ROW = 6;
@@ -39,20 +39,20 @@ public class Puissance4 extends JFrame {
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		JMenuBar barreMenu = new JMenuBar();
 		setJMenuBar(barreMenu);
+		Panneau[][] panneaux = new Panneau[ROW][COLUMN];
 
 		JMenu modeJeu = new JMenu("Mode de jeu");
-
 		JRadioButtonMenuItem homVsMach = new JRadioButtonMenuItem("Homme vs Machine");
-		homVsMach.addActionListener(new ModeJeuSelectionListener(ModeJeu.HOMME_VS_MACHINE));
+		homVsMach.addActionListener(new ModeJeuSelectionListener(ModeJeu.HOMME_VS_MACHINE,panneaux));
 
 		JRadioButtonMenuItem machVsHom = new JRadioButtonMenuItem("Machine vs Homme");
-		machVsHom.addActionListener(new ModeJeuSelectionListener(ModeJeu.MACHINE_VS_HOMME));
+		machVsHom.addActionListener(new ModeJeuSelectionListener(ModeJeu.MACHINE_VS_HOMME,panneaux));
 
 		JRadioButtonMenuItem homVsHom = new JRadioButtonMenuItem("Homme vs Homme");
-		homVsHom.addActionListener(new ModeJeuSelectionListener(ModeJeu.HOMME_VS_HOMME));
+		homVsHom.addActionListener(new ModeJeuSelectionListener(ModeJeu.HOMME_VS_HOMME,panneaux));
 
 		JRadioButtonMenuItem machVsMach = new JRadioButtonMenuItem("Machine vs Machine");
-		machVsMach.addActionListener(new ModeJeuSelectionListener(ModeJeu.MACHINE_VS_MACHINE));
+		machVsMach.addActionListener(new ModeJeuSelectionListener(ModeJeu.MACHINE_VS_MACHINE,panneaux));
 
 		ButtonGroup gr = new ButtonGroup();
 		gr.add(homVsHom);
@@ -68,14 +68,14 @@ public class Puissance4 extends JFrame {
 		joueur = "ROUGE";
 		annonce = new JLabel("Joueur " + joueur + ", à vous de jouer ! ");
 		barreMenu.add(annonce);
-		JLabel tourJoueur = new JLabel("  Tour 0");
+		tourJoueur = new JLabel("  Tour 0");
 		barreMenu.add(tourJoueur);
 		JPanel jeu = new JPanel();
 		jeu.setSize(400, 300);
 		jeu.setLayout(new GridLayout(ROW, COLUMN));
 		jeu.setBackground(Color.GRAY);
 
-		Panneau[][] panneaux = new Panneau[ROW][COLUMN];
+		//Panneau[][] panneaux = new Panneau[ROW][COLUMN];
 
 		Jouer mouseListener = new Jouer(panneaux, tourJoueur, modeJeuActuel);
 		
@@ -94,16 +94,18 @@ public class Puissance4 extends JFrame {
 	@SuppressWarnings("unused")
 	private final class ModeJeuSelectionListener implements ActionListener {
 		private final ModeJeu modeJeuEnum;
+		private final Panneau [][] cellules;
 
-		public ModeJeuSelectionListener(ModeJeu modeJeuEnum) {
+		public ModeJeuSelectionListener(ModeJeu modeJeuEnum,Panneau[][] cellules) {
 			this.modeJeuEnum = modeJeuEnum;
+			this.cellules=cellules;
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			modeJeuActuel = modeJeuEnum;
 			if(modeJeuEnum==ModeJeu.HOMME_VS_HOMME) {
-				
+				Jouer HVsH=new Jouer(cellules,tourJoueur,ModeJeu.HOMME_VS_HOMME);
 			}else if (modeJeuEnum==ModeJeu.HOMME_VS_MACHINE) {
 				
 			}else if(modeJeuEnum==ModeJeu.MACHINE_VS_HOMME) {
@@ -178,23 +180,6 @@ public class Puissance4 extends JFrame {
 
 			annonce.setText("Joueur " + joueur + ", à vous de jouer ! ");
 
-			switch (this.modeJeu) {
-			case HOMME_VS_HOMME:
-
-				break;
-			case MACHINE_VS_HOMME:
-
-				break;
-			case HOMME_VS_MACHINE:
-
-				break;
-			case MACHINE_VS_MACHINE:
-
-				break;
-			default:
-				break;
-			}
-
 			Panneau celluleJouee = jouer(cellules, celluleCliquee.colIndex, color);
 
 			if (celluleJouee == null) {
@@ -245,8 +230,13 @@ public class Puissance4 extends JFrame {
 			return cellules[ligne][colonne];
 		}
 		
-		public void Machine(Panneau [][] panneaux,Color couleurMachine) {
-			
+		public void Machine(Panneau [][] panneaux,Color couleurMachine,int ligne) {
+			 int colonne=0;
+			Panneau valide=new Panneau(ligne,colonne);
+			do {
+	               valide=jouer(panneaux,colonne,couleurMachine);
+	               colonne ++;
+		}while(valide==null);
 		}
 	}
 
